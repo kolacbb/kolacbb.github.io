@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* CSS样式 */
+        /* Reset some default styles */
+        html, body, div, p, button {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            user-select: none;
+            cursor: auto;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        main {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .typing-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 10px;
+        }
+
+        .text-container {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .input-container {
+            flex: 1;
+        }
+
+        .highlight {
+            background-color: #ff5733;
+            color: #fff;
+        }
+
+        .keyboard-container {
+            background-color: #333;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            display: grid;
+            grid-template-columns: repeat(14, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 5px;
+        }
+
+        .keyboard-key {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+            color: white;
+            background-color: #444;
+            border: 1px solid #ccc;
+        }
+
+        .keyboard-key:hover {
+            background-color: #555;
+        }
+
+        .keyboard-key[data-key="Enter"],
+        .keyboard-key[data-key="Shift"],
+        .keyboard-key[data-key="Ctrl"],
+        .keyboard-key[data-key="Alt"],
+        .keyboard-key[data-key="Space"] {
+            grid-column: span 2;
+        }
+
+        .keyboard-key[data-key="Backspace"] {
+            grid-column: span 2;
+            background-color: #555;
+        }
+
+        .keyboard-key[data-key="Tab"] {
+            grid-column: span 1.5;
+        }
+
+        .keyboard-key[data-key="Caps"] {
+            grid-column: span 1.75;
+        }
+
+        .keyboard-key[data-key="Shift"] {
+            grid-column: span 2.25;
+        }
+
+        .keyboard-key[data-key="Ctrl"],
+        .keyboard-key[data-key="Alt"] {
+            grid-column: span 1.25;
+        }
+
+        .keyboard-key[data-key=" "] {
+            grid-column: span 4;
+        }
+
+        .stats-container {
+            margin-top: 20px;
+        }
+
+        .stats {
+            font-size: 18px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+    <script>
+        // JavaScript代码
+        document.addEventListener("DOMContentLoaded", function () {
+            const quoteElement = document.getElementById("quote");
+            const userInput = document.getElementById("user-input");
+            const wpmElement = document.getElementById("wpm");
+            const accuracyElement = document.getElementById("accuracy");
+            const keyboardContainer = document.getElementById("keyboard-container");
+
+            const quotes = [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+                "Practice makes perfect.",
+                "The quick brown fox jumps over the lazy dog.",
+                // 添加更多的句子
+            ];
+
+            const keys = [
+                // 第一行
+                "` 1 2 3 4 5 6 7 8 9 0 - = Backspace",
+                // 第二行
+                "Tab q w e r t y u i o p [ ] \\",
+                // 第三行
+                "Caps a s d f g h j k l ; ' Enter",
+                // 第四行
+                "Shift z x c v b n m , . / Shift",
+                // 第五行
+                "Ctrl Alt Space Alt Ctrl"
+            ];
+
+            let currentQuoteIndex = 0;
+            let startTime;
+            let wordCount = 0;
+            let correctCount = 0;
+            let currentIndex = 0;
+
+            function startTyping() {
+                startTime = new Date().getTime();
+                quoteElement.textContent = quotes[currentQuoteIndex];
+                currentIndex = 0;
+            }
+
+            function updateUI() {
+                const inputText = userInput.textContent;
+                const quoteText = quotes[currentQuoteIndex];
+                let outputHTML = '';
+
+                for (let i = 0; i < quoteText.length; i++) {
+                    if (i < inputText.length) {
+                        if (inputText[i] === quoteText[i]) {
+                            outputHTML += inputText[i];
+                        } else {
+                            outputHTML += `<span class="highlight">${quoteText[i]}</span>`;
+                        }
+                    } else {
+                        outputHTML += quoteText[i];
+                    }
+                }
+
+                quoteElement.innerHTML = outputHTML;
+            }
+
+            function endTyping() {
+                const endTime = new Date().getTime();
+                const timeInSeconds = (endTime - startTime) / 1000;
+                const typedWords = userInput.textContent.split(" ");
+                wordCount += typedWords.length;
+
+                for (let i = 0; i < typedWords.length; i++) {
+                    if (typedWords[i] === quotes[currentQuoteIndex].split(" ")[i]) {
+                        correctCount++;
+                    }
+                }
+
+                const wpm = Math.round((wordCount / timeInSeconds) * 60);
+                const accuracy = ((correctCount / wordCount) * 100).toFixed(2) + "%";
+
+                wpmElement.textContent = wpm;
+                accuracyElement.textContent = accuracy;
+
+                currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+                startTyping();
+            }
+
+            startTyping();
+
+            const keyboardKeys = document.querySelectorAll(".keyboard-key");
+            const pressedKeys = new Set();
+
+            keyboardKeys.forEach(keyboardKey => {
+                keyboardKey.addEventListener("mousedown", () => {
+                    keyboardKey.classList.add("highlight");
+                    pressedKeys.add(keyboardKey.dataset.key);
+                });
+
+                keyboardKey.addEventListener("mouseup", () => {
+                    keyboardKey.classList.remove("highlight");
+                    pressedKeys.delete(keyboardKey.dataset.key);
+                });
+
+                keyboardKey.addEventListener("mouseleave", () => {
+                    if (!pressedKeys.has(keyboardKey.dataset.key)) {
+                        keyboardKey.classList.remove("highlight");
+                    }
+                });
+
+                keyboardKey.addEventListener("click", () => {
+                    if (currentIndex >= quotes[currentQuoteIndex].length) {
+                        return;
+                    }
+
+                    const key = keyboardKey.dataset.key.toLowerCase();
+                    const quoteText = quotes[currentQuoteIndex];
+
+                    if (key === quoteText[currentIndex]) {
+                        userInput.textContent += key;
+                        currentIndex++;
+                        updateUI();
+
+                        if (currentIndex === quoteText.length) {
+                            endTyping();
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+<header>
+    <h1>键盘打字练习</h1>
+</header>
+<main>
+    <div class="typing-container">
+        <div class="text-container">
+            <p id="quote">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="input-container" contentEditable="true" id="user-input"></div>
+    </div>
+
+
+    <div class="keyboard-container" id="keyboard-container">
+        <!-- 生成虚拟键盘 -->
+        <div class="keyboard-key" data-key="`">`</div>
+        <div class="keyboard-key" data-key="1">1</div>
+        <div class="keyboard-key" data-key="2">2</div>
+        <div class="keyboard-key" data-key="3">3</div>
+        <div class="keyboard-key" data-key="4">4</div>
+        <div class="keyboard-key" data-key="5">5</div>
+        <div class="keyboard-key" data-key="6">6</div>
+        <div class="keyboard-key" data-key="7">7</div>
+        <div class="keyboard-key" data-key="8">8</div>
+        <div class="keyboard-key" data-key="9">9</div>
+        <div class="keyboard-key" data-key="0">0</div>
+        <div class="keyboard-key" data-key="-">-</div>
+        <div class="keyboard-key" data-key="=">=</div>
+        <div class="keyboard-key" data-key="Backspace">Backspace</div>
+        <div class="keyboard-key" data-key="Tab">Tab</div>
+        <div class="keyboard-key" data-key="q">Q</div>
+        <div class="keyboard-key" data-key="w">W</div>
+        <div class="keyboard-key" data-key="e">E</div>
+        <div class="keyboard-key" data-key="r">R</div>
+        <div class="keyboard-key" data-key="t">T</div>
+        <div class="keyboard-key" data-key="y">Y</div>
+        <div class="keyboard-key" data-key="u">U</div>
+        <div class="keyboard-key" data-key="i">I</div>
+        <div class="keyboard-key" data-key="o">O</div>
+        <div class="keyboard-key" data-key="p">P</div>
+        <div class="keyboard-key" data-key="[">[</div>
+        <div class="keyboard-key" data-key="]">]</div>
+        <div class="keyboard-key" data-key="\\">\\</div>
+        <div class="keyboard-key" data-key="Caps">Caps</div>
+        <div class="keyboard-key" data-key="a">A</div>
+        <div class="keyboard-key" data-key="s">S</div>
+        <div class="keyboard-key" data-key="d">D</div>
+        <div class="keyboard-key" data-key="f">F</div>
+        <div class="keyboard-key" data-key="g">G</div>
+        <div class="keyboard-key" data-key="h">H</div>
+        <div class="keyboard-key" data-key="j">J</div>
+        <div class="keyboard-key" data-key="k">K</div>
+        <div class="keyboard-key" data-key="l">L</div>
+        <div class="keyboard-key" data-key=";">;</div>
+        <div class="keyboard-key" data-key="'">'</div>
+        <div class="keyboard-key" data-key="Enter">Enter</div>
+        <div class="keyboard-key" data-key="Shift">Shift</div>
+        <div class="keyboard-key" data-key="z">Z</div>
+        <div class="keyboard-key" data-key="x">X</div>
+        <div class="keyboard-key" data-key="c">C</div>
+        <div class="keyboard-key" data-key="v">V</div>
+        <div class="keyboard-key" data-key="b">B</div>
+        <div class="keyboard-key" data-key="n">N</div>
+        <div class="keyboard-key" data-key="m">M</div>
+        <div class="keyboard-key" data-key=",">,</div>
+        <div class="keyboard-key" data-key=".">.</div>
+        <div class="keyboard-key" data-key="/"></div>
+        <div class="keyboard-key" data-key="Shift">Shift</div>
+        <div class="keyboard-key" data-key="Ctrl">Ctrl</div>
+        <div class="keyboard-key" data-key="Alt">Alt</div>
+        <div class="keyboard-key" data-key="Space">Space</div>
+        <div class="keyboard-key" data-key="Alt">Alt</div>
+        <div class="keyboard-key" data-key="Ctrl">Ctrl</div>
+    </div>
+    <svg class="DUsJFvE_k9" viewBox="0 0 671 250" height="16rem"
+         style="aspect-ratio: 671 / 250; transform: scale(1.35);">
+        <defs>
+            <pattern id="key-zone-a" patternUnits="userSpaceOnUse" width="10" height="10">
+                <path class="R4NIzOLRwj" d="M0 0h10v10H0z"></path>
+                <path class="ctdPxc_O26" d="M-1 1l2-2M0 10L10 0M9 11l2-2"></path>
+            </pattern>
+            <pattern id="key-zone-b" patternUnits="userSpaceOnUse" width="10" height="10">
+                <path class="R4NIzOLRwj" d="M10 0H0v10h10z"></path>
+                <path class="wBG9z1gMx9" d="M11 1L9-1m1 11L0 0m1 11l-2-2"></path>
+            </pattern>
+        </defs>
+        <rect class="trrjpD9uJd" x="0" y="0" width="671" height="250" rx="10" ry="10"></rect>
+        <svg x="21" y="21">
+            <svg class="o1IrlVFfzL YMiELvnM3A cp6zhNlWVG" x="0" y="0" data-key="Backquote">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">~</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">`</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A cp6zhNlWVG" x="42" y="0" data-key="Digit1">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">!</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">1</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A yfGem1sNpP" x="84" y="0" data-key="Digit2">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">@</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">2</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A kaMjAfvFxx" x="126" y="0" data-key="Digit3">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">#</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">3</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="168" y="0" data-key="Digit4">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">$</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">4</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="210" y="0" data-key="Digit5">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">%</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">5</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="252" y="0" data-key="Digit6">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">^</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">6</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="294" y="0" data-key="Digit7">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">&amp;</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">7</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A l52JZCVjOC" x="336" y="0" data-key="Digit8">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">*</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">8</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A fYSvDysYgQ" x="378" y="0" data-key="Digit9">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">(</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">9</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="420" y="0" data-key="Digit0">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">)</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">0</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="462" y="0" data-key="Minus">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">_</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">-</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="504" y="0" data-key="Equal">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">+</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">=</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="546" y="0" data-key="Backspace">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="83" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Backspace</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="0" y="42" data-key="Tab">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="63" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Tab</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A cp6zhNlWVG" x="65" y="42" data-key="KeyQ">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">Q</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A yfGem1sNpP" x="107" y="42" data-key="KeyW">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">W</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A kaMjAfvFxx" x="149" y="42" data-key="KeyE">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">E</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="191" y="42" data-key="KeyR">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">R</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="233" y="42" data-key="KeyT">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">T</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="275" y="42" data-key="KeyY">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">Y</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="317" y="42" data-key="KeyU">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">U</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A l52JZCVjOC" x="359" y="42" data-key="KeyI">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">I</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A fYSvDysYgQ" x="401" y="42" data-key="KeyO">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">O</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="443" y="42" data-key="KeyP">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">P</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="485" y="42" data-key="BracketLeft">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">{</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">[</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="527" y="42" data-key="BracketRight">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">}</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">]</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="569" y="42" data-key="Backslash">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="60" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">|</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">\</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="0" y="84" data-key="CapsLock">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="70" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Caps Lock</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A cp6zhNlWVG" x="72" y="84" data-key="KeyA">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">A</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A yfGem1sNpP" x="114" y="84" data-key="KeyS">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">S</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A kaMjAfvFxx" x="156" y="84" data-key="KeyD">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">D</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="198" y="84" data-key="KeyF">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <circle class="jRTd41lToD" cx="20" cy="35" r="3"></circle>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">F</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="240" y="84" data-key="KeyG">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">G</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="282" y="84" data-key="KeyH">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">H</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="324" y="84" data-key="KeyJ">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <circle class="jRTd41lToD" cx="20" cy="35" r="3"></circle>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">J</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A l52JZCVjOC" x="366" y="84" data-key="KeyK">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">K</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A fYSvDysYgQ" x="408" y="84" data-key="KeyL">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">L</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="450" y="84" data-key="Semicolon">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">:</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">;</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="492" y="84" data-key="Quote">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">"</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">'</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="534" y="84" data-key="Enter">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="95" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Enter</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="0" y="126" data-key="ShiftLeft">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="92" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Shift</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A cp6zhNlWVG" x="94" y="126" data-key="KeyZ">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">Z</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A yfGem1sNpP" x="136" y="126" data-key="KeyX">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">X</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A kaMjAfvFxx" x="178" y="126" data-key="KeyC">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">C</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="220" y="126" data-key="KeyV">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">V</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A g3DxKXmx4i" x="262" y="126" data-key="KeyB">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">B</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="304" y="126" data-key="KeyN">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">N</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A gAF0kcxGDW" x="346" y="126" data-key="KeyM">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ FDlxlUcRxo" x="15" y="25">M</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A l52JZCVjOC" x="388" y="126" data-key="Comma">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">&lt;</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">,</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A fYSvDysYgQ" x="430" y="126" data-key="Period">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">&gt;</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">.</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A e0AoLSEs8I" x="472" y="126" data-key="Slash">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="40" height="40"></rect>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="15">?</text>
+                <text class="qIjR5euU2_ hBPP5frcS8" x="10" y="30">/</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="514" y="126" data-key="ShiftRight">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="115" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Shift</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="0" y="168" data-key="ControlLeft">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="63" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Ctrl</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="65" y="168" data-key="AltLeft">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="63" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Alt</text>
+            </svg>
+            <svg class="o1IrlVFfzL YMiELvnM3A" x="130" y="168" data-key="Space">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="369" height="40"></rect>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="501" y="168" data-key="AltRight">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="63" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Alt Gr</text>
+            </svg>
+            <svg class="o1IrlVFfzL C2kDVo7nn4" x="566" y="168" data-key="ControlRight">
+                <rect class="uJ0RmVgUF2" x="0" y="0" width="63" height="40"></rect>
+                <text class="qIjR5euU2_" x="15" y="25">Ctrl</text>
+            </svg>
+        </svg>
+
+    </svg>
+    <div class="stats-container">
+        <div class="stats">
+            <span>速度: <span id="wpm">0</span> WPM</span>
+            <span>准确度: <span id="accuracy">100%</span></span>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2023 你的网站名称</p>
+</footer>
+</body>
+</html>
