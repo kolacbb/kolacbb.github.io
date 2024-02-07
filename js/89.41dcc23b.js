@@ -1,2 +1,0 @@
-"use strict";(self["webpackChunkAppLocalize"]=self["webpackChunkAppLocalize"]||[]).push([[89],{4089:function(n,u,e){e.r(u),e.d(u,{default:function(){return p}});var l=function(){var n=this,u=n._self._c;return u("h1",[n._v("Pricing")])},r=[],t={data(){return{}}},c=t,a=e(3736),i=(0,a.Z)(c,l,r,!1,null,null,null),p=i.exports}}]);
-//# sourceMappingURL=89.41dcc23b.js.map
