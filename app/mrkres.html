@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View Results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/marked@2.0.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+    .rounded-image {
+      border-radius: 8px;
+      width: 100%;
+      height: auto;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+    body {
+      margin: 0;
+      padding: 16px;
+      font-size: 16px;
+      color: #292d39;
+      background-color: #f9f9f9;
+      line-height: 1.6;
+      overflow-y: auto; /* 添加垂直滚动条 */
+    }
+  </style>
+</head>
+<body>
+<div id="image-container"></div>
+<div id="markdown-container"></div>
+
+<script>
+    // Get the Markdown content from the URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const markdown = urlParams.get('content');
+
+    // Parse Markdown and render LaTeX equations
+    const html = marked(decodeURI(markdown));
+    document.getElementById('markdown-container').innerHTML = html;
+    // Render the HTML with MathJax
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['\(', '\)']],
+        displayMath: [['$$', '$$']],
+        processEscapes: true,
+        processEnvironments: true
+      }
+    });
+    MathJax.Hub.Queue(['Typeset', MathJax.Hub, 'markdown-container']);
+
+
+     // Get the image URL from the URL parameter
+    const imgUrl = urlParams.get('img');
+
+    // Display the image on the web page
+    if (imgUrl) {
+      const image = document.createElement('img');
+      image.src = imgUrl;
+      image.classList.add('rounded-image');
+      document.getElementById('image-container').appendChild(image);
+    }
+
+    const theme = urlParams.get('theme');
+    if (theme == 'dark') {
+      document.body.style.color = '#c4c6d0';
+      document.body.style.backgroundColor = '#202125';
+    }
+
+  </script>
+</body>
+</html>
