@@ -1,6 +1,6 @@
 {
     "log": {
-      "level": "error",
+      "level": "info",
       "timestamp": true
     },
     "inbounds": [
@@ -71,6 +71,10 @@
             "private"
           ],
           "outbound": "direct"
+        },
+        {
+          "geosite": "category-ads-all",
+          "outbound": "block"
         }
       ],
       "auto_detect_interface": true
