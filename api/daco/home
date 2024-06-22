@@ -1,0 +1,15 @@
+{
+    "code": 200,
+    "data": {
+        "card": [
+            "style": 1,
+            "data": {
+               "title": "Humorous scenes",
+               "items": [
+                   "title": "Opening remarks",
+                   "route": ""
+               ]
+            }
+        ]
+    }
+}

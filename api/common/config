@@ -1,0 +1,13 @@
+{
+    "code": 200,
+    "data": {
+        "popup": {
+            "adid": 1001,
+            "pkgName": "com.github.kolacbb.quizer",
+            "excludePkgName": "com.github.kolacbb.launcher",
+            "title": "Quizer: Homework helper",
+            "msg": "Your private tutor to help you with all your subjects and easily get answers",
+
+        }
+    }
+}
