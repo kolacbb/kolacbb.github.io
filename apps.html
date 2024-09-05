@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>View Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .rounded-image {
+            border-radius: 20px;
+            width: 20%;
+            height: auto;
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .download-button {
+            display: block;
+            width: 100%;
+            height: 56px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            line-height: 56px;
+            text-align: center;
+            font-size: 20px;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #3B78E7;
+            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Mulish', sans-serif;
+            font-size: 16px;
+            color: #292d39;
+            background-color: #f9f9f9;
+            line-height: 1.6;
+            overflow-y: auto; /* 添加垂直滚动条 */
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="app-details">
+    <div style="display: flex; align-items: center">
+        <img class="rounded-image" src="https://play-lh.googleusercontent.com/aaW__8iS8rms4xL5CaXdbo1_r88vZyZZhOoDblsgGhS9aPTL-KFVLgS-QQIgpX4Z5g=w240-h480-rw" alt="App Image">
+        <h2 class="app-title" style="margin: 12px">Translate: Ai Screen Translator</h2>
+    </div>
+
+    <p class="app-description">Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.</p>
+
+
+    <a class="download-button" href="https://www.google.com">Download</a>
+
+    <div style="display: flex; overflow-x:auto; max-height: 400px;">
+        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/F1zgz3O6Mw2176sCDZN0f2wvVjkiGBFc1lG3usaf2mHVfiZcfRvBuYt-KCfkq8MbWQA=w526-h296-rw"/>
+        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/E71MN7CLCDu5yNTDh7SSwx8jNuss6bm-j1v5NMqJEb-jwS9cqjawfQhMcfKci57Kwg=w526-h296-rw"/>
+        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/dQkYT0-HsN7GGiTW2XC2qS7g-OgP2iWc-peC3lL_1uMWdaD_7Pyf5DZpeyxFI9mzEA=w526-h296-rw"/>
+        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/NjwZri349YwED2JZYVCEIdgb6BArzDyLPwod4Z1zPFPZ-pPZVVI-6re_BTV6l-fr0gc=w526-h296-rw"/>
+    </div>
+
+    <pre class="app-description" style="white-space:pre-wrap; text-align: left; word-wrap: break-word;">
+Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.
+
+Instant translate on screen: Translate text in your apps instantly—whether posts, blogs, chats, or simple text—without switching between translation apps.
+
+Chat Translation: Instantly translate chat content in various social messaging apps. Supports translation for chat bubbles, input boxes, and clipboard text.
+
+Floating Translation: Drag the floating ball to any text you want to translate, or use the full-screen translation feature to translate the entire screen.
+
+Comic Mode: Specially processed vertical text for easier reading of comics in any language without language barriers.
+
+Collect Text: Save text for later reading or editing.
+
+Photo Translation: Utilize advanced text recognition AI for precise translation of text in images.
+
+Auto Translation: Real-time automatic translation of selected screen areas, perfect for gaming or watching subtitled movies.
+    </pre>
+
+</div>
+
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const theme = urlParams.get('theme');
+    if (theme == 'dark') {
+        document.body.style.color = '#c4c6d0';
+        document.body.style.backgroundColor = '#202125';
+    }
+
+
+</script>
+</body>
+</html>
