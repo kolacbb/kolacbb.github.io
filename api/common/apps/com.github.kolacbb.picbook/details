@@ -1,0 +1,16 @@
+{
+    "code": 200,
+    "data": {
+        "title": "PicBook: Picture Book Maker",
+        "desc": "A simple and fun audio picture book creator & editor",
+        "icon": "https://play-lh.googleusercontent.com/aaW__8iS8rms4xL5CaXdbo1_r88vZyZZhOoDblsgGhS9aPTL-KFVLgS-QQIgpX4Z5g=w480-h960-rw",
+        "route": "https://play.google.com/store/apps/details?id=com.github.kolacbb.picbook&referrer=utm_source%3reward_ads%26utm_medium%3Dmsg",
+        "description": "PicBook can create picture books with your own pictures or photos, and can enrich the content of picture books with text and audio. It's not just a picture book maker and editing tool, it can also be used to create story books, memory albums, flashcards and more.\n\n🎁 Key Features\n\n⭐️ Select the picture in the album to create a picture book\n⭐️ Not only can choose from local device, but also support to choose from Google photos\n⭐️ Add text and audio to each page of the picture book\n⭐️ The created picture book content (picture and audio) will only be saved locally\n⭐️ Built-in rich picture books for reading and editing, which can be used as templates\n⭐️ Complete picture book reading experience\n\n\n🎁 Scenes\n\n⭐️ Flashcards: Use your own voice and carefully selected pictures to create a flashcard for you to learn to recognize colors, learn to write and pronounce letters, learn to recognize shapes, and more. PicBook will be a powerful tool for you to understand the world!\n\n⭐️ Memories album: record a journey that has just been completed or the common memories with the person you love. With the most sincere language and text, you can create a touching audio-visual feast of memories.\n\n⭐️ Storybook: Prepare to make a storybook for you, using your familiar voice, so that he can hear your gentlest voice and the most interesting and meaningful stories all the time\n\n\n🎁 More Info\n\nFor inquiries, please kindly send your question to kolacbb@gmail.com, our service team will get back to you as soon as possible. Thank you!",
+        "previews": [
+            "https://play-lh.googleusercontent.com/F1zgz3O6Mw2176sCDZN0f2wvVjkiGBFc1lG3usaf2mHVfiZcfRvBuYt-KCfkq8MbWQA=w1052-h592-rw",
+            "https://play-lh.googleusercontent.com/E71MN7CLCDu5yNTDh7SSwx8jNuss6bm-j1v5NMqJEb-jwS9cqjawfQhMcfKci57Kwg=w1052-h592-rw",
+            "https://play-lh.googleusercontent.com/dQkYT0-HsN7GGiTW2XC2qS7g-OgP2iWc-peC3lL_1uMWdaD_7Pyf5DZpeyxFI9mzEA=w1052-h592-rw",
+            "https://play-lh.googleusercontent.com/NjwZri349YwED2JZYVCEIdgb6BArzDyLPwod4Z1zPFPZ-pPZVVI-6re_BTV6l-fr0gc=w1052-h592-rw"
+        ]
+   }
+}

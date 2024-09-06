@@ -54,35 +54,20 @@
         <h2 class="app-title" style="margin: 12px">Translate: Ai Screen Translator</h2>
     </div>
 
-    <p class="app-description">Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.</p>
+
+    <p class="desc">Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.</p>
 
 
     <a class="download-button" href="https://play.google.com/store/apps/details?id=top.applocalize.translate&referrer=utm_source%3reward_ads%26utm_medium%3Dmsg">Download</a>
 
     <div style="display: flex; overflow-x:auto; max-height: 400px;">
-        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/F1zgz3O6Mw2176sCDZN0f2wvVjkiGBFc1lG3usaf2mHVfiZcfRvBuYt-KCfkq8MbWQA=w526-h296-rw"/>
-        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/E71MN7CLCDu5yNTDh7SSwx8jNuss6bm-j1v5NMqJEb-jwS9cqjawfQhMcfKci57Kwg=w526-h296-rw"/>
-        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/dQkYT0-HsN7GGiTW2XC2qS7g-OgP2iWc-peC3lL_1uMWdaD_7Pyf5DZpeyxFI9mzEA=w526-h296-rw"/>
-        <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/NjwZri349YwED2JZYVCEIdgb6BArzDyLPwod4Z1zPFPZ-pPZVVI-6re_BTV6l-fr0gc=w526-h296-rw"/>
+        <img class="preview" style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/F1zgz3O6Mw2176sCDZN0f2wvVjkiGBFc1lG3usaf2mHVfiZcfRvBuYt-KCfkq8MbWQA=w526-h296-rw"/>
+        <img class="preview" style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/E71MN7CLCDu5yNTDh7SSwx8jNuss6bm-j1v5NMqJEb-jwS9cqjawfQhMcfKci57Kwg=w526-h296-rw"/>
+        <img class="preview" style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/dQkYT0-HsN7GGiTW2XC2qS7g-OgP2iWc-peC3lL_1uMWdaD_7Pyf5DZpeyxFI9mzEA=w526-h296-rw"/>
+        <img class="preview" style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/NjwZri349YwED2JZYVCEIdgb6BArzDyLPwod4Z1zPFPZ-pPZVVI-6re_BTV6l-fr0gc=w526-h296-rw"/>
     </div>
 
-    <pre class="app-description" style="white-space:pre-wrap; text-align: left; word-wrap: break-word;">
-Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.
-
-Instant translate on screen: Translate text in your apps instantly—whether posts, blogs, chats, or simple text—without switching between translation apps.
-
-Chat Translation: Instantly translate chat content in various social messaging apps. Supports translation for chat bubbles, input boxes, and clipboard text.
-
-Floating Translation: Drag the floating ball to any text you want to translate, or use the full-screen translation feature to translate the entire screen.
-
-Comic Mode: Specially processed vertical text for easier reading of comics in any language without language barriers.
-
-Collect Text: Save text for later reading or editing.
-
-Photo Translation: Utilize advanced text recognition AI for precise translation of text in images.
-
-Auto Translation: Real-time automatic translation of selected screen areas, perfect for gaming or watching subtitled movies.
-    </pre>
+    <pre class="description" style="white-space:pre-wrap; text-align: left; word-wrap: break-word;"></pre>
 
 </div>
 
@@ -116,31 +101,59 @@ Auto Translation: Real-time automatic translation of selected screen areas, perf
         callback(json.params)
     }
 
-    fetch('https://applocalize.top/apps/list')
-        .then(response => {
-            if (response.ok) {
-                try {
-                    const packages = response.json().data
-                    callNative("hasInstall", {"pkgNames": packages }, function(data) {
-                        data.result.some((value, index) => {
-                            if (value) {
-                                return false
-                            }
-                            console.log(packages[index] + "is not installed");
-                            return true
-                        });
-                    })
-                } catch (err) {
-                    console.log(err);
-                }
+    function refreshPage(pkgName, lang) {
+        console.log(0 < lang.length)
+        let langPath = "";
+        if (0 < lang.length) {
+            langPath = "/" + lang
+        }
+        fetch('https://applocalize.top/api/common/apps/' + pkgName + "/details" + langPath).then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        })
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-        });
+            return response.json();
+        }).then(data => {
+            document.getElementsByClassName('rounded-image')[0].src = data.data.icon;
+            document.getElementsByClassName('app-title')[0].textContent = data.data.title;
+            document.getElementsByClassName('desc')[0].textContent = data.data.desc;
+            document.getElementsByClassName('description')[0].textContent = data.data.description;
+            document.getElementsByClassName('download-button')[0].herf = data.data.route;
+
+
+            document.getElementsByClassName('preview')[0].src = data.data.previews[0];
+            document.getElementsByClassName('preview')[1].src = data.data.previews[1];
+            document.getElementsByClassName('preview')[2].src = data.data.previews[2];
+            document.getElementsByClassName('preview')[3].src = data.data.previews[3];
+
+        }).catch(error => { console.error('There was a problem with the fetch operation:', error); });
+    }
+
+    fetch('https://applocalize.top/api/common/apps/list').then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }).then(data => {
+        try {
+            const packages = data.data
+            callNative("hasInstall", {"pkgNames": packages }, function(data) {
+                data.result.some((value, index) => {
+                    if (value) {
+                        return false
+                    }
+                    console.log(packages[index] + "is not installed");
+                    refreshPage(packages[index], "")
+                    return true
+                });
+            })
+
+
+
+
+        } catch (err) {
+            console.log(err);
+        }
+    }).catch(error => { console.error('There was a problem with the fetch operation:', error); });
 
     const urlParams = new URLSearchParams(window.location.search);
     const theme = urlParams.get('theme');
