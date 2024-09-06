@@ -106,7 +106,7 @@ Auto Translation: Real-time automatic translation of selected screen areas, perf
     }
 
     function callbackNative(json) {
-        console.log(text);
+        console.log(json);
         const callback = callbackMap.get(json.callId);
         if (callback) {
             callbackMap.delete(json.callId);
