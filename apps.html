@@ -57,7 +57,7 @@
     <p class="app-description">Screen translation, AI text translation, camera translation, voice translation—your one-stop optimized mobile translation experience.</p>
 
 
-    <a class="download-button" href="https://www.google.com">Download</a>
+    <a class="download-button" href="https://play.google.com/store/apps/details?id=top.applocalize.translate&referrer=utm_source%3reward_ads%26utm_medium%3Dmsg">Download</a>
 
     <div style="display: flex; overflow-x:auto; max-height: 400px;">
         <img style="border-radius: 8px; margin-right: 20px" alt="Preview" src="https://play-lh.googleusercontent.com/F1zgz3O6Mw2176sCDZN0f2wvVjkiGBFc1lG3usaf2mHVfiZcfRvBuYt-KCfkq8MbWQA=w526-h296-rw"/>
@@ -88,6 +88,46 @@ Auto Translation: Real-time automatic translation of selected screen areas, perf
 
 
 <script>
+    // Native Bridge
+    const callbackMap = new Map();
+    function callNative(nativeMethod, params, callback) {
+        const timestamp = Date.now().toString(36);
+        const randomString = Math.random().toString(36).substr(2, 5);
+        const uniqueId = timestamp + randomString;
+
+        const request = {
+            "method": nativeMethod,
+            "params": params,
+            "callId": uniqueId
+        };
+        callbackMap.set(uniqueId, callback);
+
+        window.WebBridge.call(JSON.stringify(request));
+    }
+
+    function callbackNative(json) {
+        console.log(text);
+        const callback = callbackMap.get(json.callId);
+        if (callback) {
+            callbackMap.delete(json.callId);
+        } else {
+            return
+        }
+        callback(json.params)
+    }
+
+    try {
+        const packages = ['top.applocalize.translate', 'com.github.kolacbb.homework', 'com.github.kolacbb.launcher'];
+
+        callNative("hasInstall", {"pkgNames": packages }, function(data) {
+            data.result.forEach((value, index) => {
+                console.log(`bool ${index + 1}: ${value}`);
+            });
+        })
+    } catch (err) {
+        console.log(err);
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const theme = urlParams.get('theme');
     if (theme == 'dark') {
