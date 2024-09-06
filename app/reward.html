@@ -116,17 +116,31 @@ Auto Translation: Real-time automatic translation of selected screen areas, perf
         callback(json.params)
     }
 
-    try {
-        const packages = ['top.applocalize.translate', 'com.github.kolacbb.homework', 'com.github.kolacbb.launcher'];
-
-        callNative("hasInstall", {"pkgNames": packages }, function(data) {
-            data.result.forEach((value, index) => {
-                console.log(`bool ${index + 1}: ${value}`);
-            });
+    fetch('https://applocalize.top/apps/list')
+        .then(response => {
+            if (response.ok) {
+                try {
+                    const packages = response.json().data
+                    callNative("hasInstall", {"pkgNames": packages }, function(data) {
+                        data.result.some((value, index) => {
+                            if (value) {
+                                return false
+                            }
+                            console.log(packages[index] + "is not installed");
+                            return true
+                        });
+                    })
+                } catch (err) {
+                    console.log(err);
+                }
+            }
         })
-    } catch (err) {
-        console.log(err);
-    }
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
 
     const urlParams = new URLSearchParams(window.location.search);
     const theme = urlParams.get('theme');
