@@ -1,0 +1,129 @@
+{
+  "worlds": [
+    {
+      "id": 1,
+      "title": "World 1: The Golden 42 Sounds",
+      "description": "掌握 42 个基础音素中的核心部分，学会从左到右的拼读。",
+      "units": [
+        {
+          "id": 1,
+          "title": "Unit 1 (SATPIN)",
+          "sounds": ["s", "a", "t", "p", "i", "n"],
+          "notes": "学完这6个，就能拼出几十个单词，如 at, it, sit, pat, tap, pan, tin, spin。"
+        },
+        {
+          "id": 2,
+          "title": "Unit 2 (CKEHRM)",
+          "sounds": ["c/k", "e", "h", "r", "m", "d"]
+        },
+        {
+          "id": 3,
+          "title": "Unit 3 (GOULFB)",
+          "sounds": ["g", "o", "u", "l", "f", "b"]
+        },
+        {
+          "id": 4,
+          "title": "Unit 4 (J-Z-W-V-Y-X)",
+          "sounds": ["j", "z", "w", "v", "y", "x"]
+        },
+        {
+          "id": 5,
+          "title": "Unit 5 (Double Trouble)",
+          "sounds": ["ss", "ll", "ff", "zz"],
+          "notes": "双写辅音，发音不变。"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "World 2: Consonant Blends",
+      "description": "学会处理连续的辅音，这是大多数非英语母语者的痛点。",
+      "units": [
+        {
+          "id": 1,
+          "title": "Unit 1 (Start Strong)",
+          "sounds": ["st-", "sp-", "sk-", "sm-", "sn-"],
+          "examples": ["stop", "skin"]
+        },
+        {
+          "id": 2,
+          "title": "Unit 2 (L & R Blends)",
+          "sounds": ["bl-", "cl-", "fl-", "br-", "cr-", "dr-"],
+          "examples": ["black", "frog"]
+        },
+        {
+          "id": 3,
+          "title": "Unit 3 (End Strong)",
+          "sounds": ["-st", "-nd", "-mp", "-nt", "-nk"],
+          "examples": ["fast", "hand", "jump"],
+          "notes": "亚洲用户常吞掉尾音，需要强化辨尾练习。"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "World 3: Digraphs",
+      "description": "理解“两个字母合体变身”的概念。",
+      "units": [
+        {
+          "id": 1,
+          "title": "Unit 1 (The H Brothers)",
+          "sounds": ["sh", "ch", "th (unvoiced)", "th (voiced)"],
+          "notes": "需展示口腔图，区分 s / sh，t / th。"
+        },
+        {
+          "id": 2,
+          "title": "Unit 2 (Nasal & Endings)",
+          "sounds": ["ng", "nk", "ck"]
+        },
+        {
+          "id": 3,
+          "title": "Unit 3 (Wait, what?)",
+          "sounds": ["qu (kw)", "wh"]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "World 4: Magic E",
+      "description": "自然拼读的分水岭，理解元音的变形。",
+      "units": [
+        { "id": 1, "title": "Unit 1", "sounds": ["a_e"], "example": "cake" },
+        { "id": 2, "title": "Unit 2", "sounds": ["i_e"], "example": "bike" },
+        { "id": 3, "title": "Unit 3", "sounds": ["o_e"], "example": "bone" },
+        { "id": 4, "title": "Unit 4", "sounds": ["u_e"], "example": "cute / tube" },
+        { "id": 5, "title": "Unit 5", "sounds": ["e_e"], "example": "Pete", "notes": "较少见，但需完整性。" }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "World 5: Vowel Teams",
+      "description": "掌握常见的双元音。",
+      "units": [
+        { "id": 1, "title": "Unit 1 (Rain & Play)", "sounds": ["ai", "ay"] },
+        { "id": 2, "title": "Unit 2 (Tree & Sea)", "sounds": ["ee", "ea"] },
+        { "id": 3, "title": "Unit 3 (Boat & Snow)", "sounds": ["oa", "ow"] },
+        { "id": 4, "title": "Unit 4 (Moon & Book)", "sounds": ["oo"], "notes": "含长短音" },
+        { "id": 5, "title": "Unit 5 (Light & Fly)", "sounds": ["igh", "y (as i)"] }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "World 6: The Bossy R & Complex Sounds",
+      "description": "解决不规则拼写，迈向流利阅读。",
+      "units": [
+        { "id": 1, "title": "Unit 1", "sounds": ["ar"], "example": "car" },
+        { "id": 2, "title": "Unit 2", "sounds": ["or", "ore", "aw", "au"], "examples": ["fork", "saw"] },
+        {
+          "id": 3,
+          "title": "Unit 3",
+          "sounds": ["er", "ir", "ur"],
+          "notes": "三者发音常相同",
+          "examples": ["her", "bird", "turn"]
+        },
+        { "id": 4, "title": "Unit 4", "sounds": ["ou", "ow"], "examples": ["house", "cow"] },
+        { "id": 5, "title": "Unit 5", "sounds": ["oi", "oy"], "examples": ["oil", "boy"] }
+      ]
+    }
+  ]
+}
