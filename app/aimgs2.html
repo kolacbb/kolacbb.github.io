@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>AI 换装 Demo - Uint8Array Mask & Clean A+B</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; cursor: crosshair; display: block; margin-bottom: 10px; }
+        .row { margin-bottom: 12px; }
+        input[type=text], input[type=number] { width: 500px; }
+        button { padding: 6px 12px; }
+    </style>
+</head>
+<body>
+
+<h2>AI 换装（Cloudflare img2img）</h2>
+
+<div class="row">
+    原图 (A)：<input type="file" id="personInput" accept="image/*">
+</div>
+
+<div class="row">
+    衣服图 (B)：<input type="file" id="clothInput" accept="image/*">
+</div>
+
+<canvas id="canvas"></canvas>
+
+<div class="row">
+    Prompt：<input id="prompt" type="text" value="a person wearing a stylish jacket, realistic fabric, natural folds">
+</div>
+
+<div class="row">
+    Negative Prompt：<input id="negative" type="text" value="distorted body, bad hands, blurry face">
+</div>
+
+<div class="row">
+    Strength：<input id="strength" type="number" step="0.05" value="0.45">
+</div>
+
+<button id="submit">生成</button>
+<img id="result" style="max-width:512px; max-height:512px;" />
+
+<script>
+    const canvas = document.getElementById("canvas")
+    const ctx = canvas.getContext("2d")
+
+    let personImg = null
+    let clothImg = null
+    let drawing = false
+    const BRUSH_SIZE = 30
+
+    // mask 数据，用 Uint8Array
+    let maskWidth = 0
+    let maskHeight = 0
+    let maskArray = []
+
+    // 用于提交的干净 A+B 图 canvas
+    const submitCanvas = document.createElement("canvas")
+    const submitCtx = submitCanvas.getContext("2d")
+
+    function loadImage(file) {
+        return new Promise(res => {
+            const img = new Image()
+            img.onload = () => res(img)
+            img.src = URL.createObjectURL(file)
+        })
+    }
+
+    // 初始化 mask
+    function initMask(width, height) {
+        maskWidth = width
+        maskHeight = height
+        maskArray = [] // 原本是 Uint8Array
+        maskArray = Array(width * height).fill(0) // 初始化为黑色
+    }
+
+    // 渲染 displayCanvas：A+B + 红色可视化
+    function renderCanvas() {
+        if (!personImg || !clothImg) return
+
+        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.drawImage(personImg,0,0)
+        ctx.drawImage(clothImg,personImg.width,0)
+
+        const imageData = ctx.getImageData(0,0,canvas.width,canvas.height)
+        for (let y=0;y<maskHeight;y++){
+            for (let x=0;x<maskWidth;x++){
+                const index = y*maskWidth + x
+                if (maskArray[index] > 0){
+                    const i = (y*canvas.width + x)*4
+                    imageData.data[i] = 255
+                    imageData.data[i+1] = 0
+                    imageData.data[i+2] = 0
+                    imageData.data[i+3] = 100
+                }
+            }
+        }
+        ctx.putImageData(imageData,0,0)
+    }
+
+    // 上传原图
+    document.getElementById("personInput").onchange = async e => {
+        personImg = await loadImage(e.target.files[0])
+        updateCanvasSize()
+    }
+
+    // 上传衣服图
+    document.getElementById("clothInput").onchange = async e => {
+        clothImg = await loadImage(e.target.files[0])
+        updateCanvasSize()
+    }
+
+    // 更新 displayCanvas & mask & submitCanvas 尺寸
+    function updateCanvasSize(){
+        if(!personImg || !clothImg) return
+        const width = personImg.width + clothImg.width
+        const height = Math.max(personImg.height, clothImg.height)
+
+        canvas.width = width
+        canvas.height = height
+        initMask(width,height)
+
+        submitCanvas.width = width
+        submitCanvas.height = height
+        submitCtx.clearRect(0,0,width,height)
+        submitCtx.drawImage(personImg,0,0)
+        submitCtx.drawImage(clothImg,personImg.width,0)
+
+        renderCanvas()
+    }
+
+    // 鼠标事件
+    canvas.onmousedown = () => drawing=true
+    canvas.onmouseup = () => drawing=false
+    canvas.onmouseleave = () => drawing=false
+
+    canvas.onmousemove = e => {
+        if(!drawing || !personImg) return
+        const rect = canvas.getBoundingClientRect()
+        const x = Math.floor(e.clientX - rect.left)
+        const y = Math.floor(e.clientY - rect.top)
+
+        // 限制只在 A 图区域涂抹
+        if(x<0 || x>=personImg.width || y<0 || y>=maskHeight) return
+
+        // 更新 maskArray
+        const r = BRUSH_SIZE
+        for(let dy=-r;dy<=r;dy++){
+            for(let dx=-r;dx<=r;dx++){
+                const nx = x+dx
+                const ny = y+dy
+                if(nx>=0 && nx<personImg.width && ny>=0 && ny<maskHeight){
+                    if(dx*dx+dy*dy <= r*r){
+                        maskArray[ny*maskWidth+nx]=255
+                    }
+                }
+            }
+        }
+        renderCanvas()
+    }
+
+    // 提交 API
+    document.getElementById("submit").onclick = async () => {
+        if(!personImg || !clothImg){ alert("请先上传原图和衣服图"); return }
+
+        const payload = {
+            image: submitCanvas.toDataURL("image/png").split(",")[1], // 干净 A+B
+            mask: maskArray, // Uint8Array
+            width: maskWidth,
+            height: maskHeight,
+            prompt: document.getElementById("prompt").value,
+            negative_prompt: document.getElementById("negative").value,
+            strength: parseFloat(document.getElementById("strength").value),
+            guidance: 7.5,
+            num_steps: 30
+        }
+
+
+        const res = await fetch("https://aimgs.664864743.workers.dev/", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(payload)
+        })
+
+        if (!res.ok) throw new Error(await res.text())
+
+        const blob = await res.blob()
+        document.getElementById("result").src = URL.createObjectURL(blob)
+
+        console.log("payload:", payload)
+        alert("生成完成，请查看 console，mask 是 Uint8Array，image 是干净 A+B 图")
+    }
+</script>
+
+</body>
+</html>

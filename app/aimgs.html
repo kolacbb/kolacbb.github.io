@@ -1,0 +1,119 @@
+<label>
+    Prompt:
+    <input type="text" id="prompt" placeholder="描述你想要的图像" style="width:300px" />
+    <input type="text" id="nprompt" placeholder="反向" style="width:300px" />
+
+</label>
+<br /><br />
+<input type="file" id="file" />
+
+<button onclick="send()">生成</button>
+
+<input type="file" id="file2" />
+
+<br /><br />
+<img id="result" style="max-width:512px; max-height:512px;" />
+
+<script>
+
+
+    // 2. 转成 Uint8Array
+    function base64ToUint8Array(base64Str) {
+        const binaryStr = atob(base64Str)          // base64 -> binary string
+        const len = binaryStr.length
+        const bytes = new Uint8Array(len)
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryStr.charCodeAt(i)
+        }
+        return bytes
+    }
+
+    // 把 File 转成 base64，并压缩到 512x512
+    async function fileToBase64(file, maxWidth = 512, maxHeight = 512) {
+        return new Promise((resolve, reject) => {
+            const img = new Image()
+            const reader = new FileReader()
+
+            reader.onload = () => {
+                img.src = reader.result
+            }
+
+            img.onload = () => {
+                const canvas = document.createElement("canvas")
+                const ctx = canvas.getContext("2d")
+
+                // 等比例缩放
+                let ratio = Math.min(maxWidth / img.width, maxHeight / img.height)
+                ratio = Math.min(ratio, 1)
+
+                canvas.width = Math.round(img.width * ratio)
+                canvas.height = Math.round(img.height * ratio)
+
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+                // 转 base64（去掉前缀）
+
+                canvas.toBlob((blob) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        // reader.result 是 ArrayBuffer
+                        const arrayBuffer = reader.result;
+                        // 转成 Uint8Array
+                        const uint8Array = new Uint8Array(arrayBuffer);
+                        console.log(Array.from(uint8Array)); // 每个元素是 0~255 的整数
+                        resolve(Array.from(uint8Array))
+                    };
+                    reader.readAsArrayBuffer(blob);
+                }, "image/png");
+
+                const base64 = canvas.toDataURL("image/png").split(",")[1]
+
+
+                // resolve(base64)
+            }
+
+            img.onerror = reject
+            reader.onerror = reject
+
+            reader.readAsDataURL(file)
+        })
+    }
+
+    async function send() {
+        const promptInput = document.getElementById("prompt").value.trim()
+        const npromptInput = document.getElementById("nprompt").value.trim()
+
+        if (!promptInput) return alert("请输入 prompt")
+
+        const file = document.getElementById("file").files[0]
+        if (!file) return alert("请选择图片")
+        const file2 = document.getElementById("file2").files[0]
+
+
+        // 压缩 + base64
+        const base64 = await fileToBase64(file, 512, 512)
+        // const base642 = await fileToBase64(file2, 512, 512)
+
+        try {
+            const res = await fetch("https://aimgs.664864743.workers.dev/", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    prompt: promptInput,
+                    image: base64,
+                    negative_prompt: npromptInput,
+                    // referImg: base642,
+                    strength: 0.5,
+                    guidance: 7.5,
+                })
+            })
+
+            if (!res.ok) throw new Error(await res.text())
+
+            const blob = await res.blob()
+            document.getElementById("result").src = URL.createObjectURL(blob)
+        } catch (err) {
+            alert("生成失败: " + err.message)
+        }
+    }
+</script>
